@@ -25,6 +25,35 @@ Se git manca: `sudo apt install git`. Oppure, senza git: *Code → Download ZIP*
 
 Tasti, formati delle canzoni, impostazioni e soluzione dei problemi sono nel **[manuale](accordatore/LEGGIMI.md)**.
 
+## Le tue canzoni
+
+Il canzoniere legge tutti i file che metti in `~/canzoni`, anche nelle sottocartelle. Al primo avvio la cartella contiene 4 esempi; il resto lo aggiungi tu.
+
+1. **Prepara il file**, in uno di questi formati (UTF-8; va bene anche la codifica di Windows):
+   - **`.txt` con gli accordi sopra il testo**, come nei siti di accordi: copi e incolli così com'è; il titolo è il nome del file. Intestazioni come `[Ritornello]` e intavolature vengono riconosciute da sole.
+     ```
+     G            C
+     Prima riga del testo
+     D            G
+     seconda riga del testo
+     ```
+   - **ChordPro** (`.cho`, `.chopro`, `.chordpro`, `.pro`, `.crd`), con gli accordi tra quadre dentro il testo:
+     ```
+     {title: La mia canzone}
+     {artist: Io}
+     [G]Prima riga del [C]testo
+     [D]seconda riga del [G]testo
+     ```
+   - **PDF di accordi** con testo vero, non scansioni: `converti-canzone ~/Downloads/brano.pdf` lo trasforma in `.txt` e lo salva in `~/canzoni`.
+
+   Gli accordi possono essere in anglosassone (C, Am, F#7) o in italiano (Do, Lam, Fa#7, SIb).
+2. **Copialo sul device**, in `~/canzoni` o in una sua sottocartella: per esempio dal computer con `scp brano.cho pi@<indirizzo-del-cardputer>:~/canzoni/`, oppure spostandolo da `~/Downloads` con `mv ~/Downloads/brano.cho ~/canzoni/`.
+3. **Nel canzoniere premi `R`** per ricaricare l'elenco.
+
+Per controllare come viene letto un file: `python3 /usr/share/APPLaunch/apps/accordatore/songbook.py --check ~/canzoni/brano.cho`.
+
+Le canzoni che aggiungi restano solo sul tuo device. Testi e accordi presi dai siti sono di solito protetti da diritto d'autore: tienili per uso personale e non proporli per questo repository. Qui entrano solo brani di pubblico dominio con accordi a licenza libera.
+
 ## Stato
 
 Provata su un solo CardputerZero, con il sistema e il launcher originali. Su altri esemplari il microfono potrebbe chiamarsi in un altro modo: il manuale spiega come sceglierlo. Le segnalazioni sono benvenute.
@@ -55,6 +84,8 @@ Guitar tuner and songbook app for the **M5Stack CardputerZero** launcher (APPLau
 - **Songbook:** lyrics with chords from ChordPro files or plain "chords over lyrics" text files. Transpose, auto-scroll, chord diagrams, Italian chord names. A `converti-canzone` command converts chord-sheet PDFs to text.
 
 **Install** (on the device): clone the repository (or download the ZIP), then `cd accordatore && sudo sh installa.sh`. The script installs the apt dependencies (`python3-numpy`, `python3-pil`, `alsa-utils`, `poppler-utils`) and adds the launcher icon. Test it without a guitar: `python3 /usr/share/APPLaunch/apps/accordatore/tuner.py --selftest`. Remove it with `sudo sh disinstalla.sh`.
+
+**Your own songs:** put ChordPro (`.cho`) or "chords over lyrics" `.txt` files in `~/canzoni` (subfolders are fine), then press `R` in the song list. `converti-canzone file.pdf` turns a text-based chord PDF into a `.txt` file there. Your songs stay on your device; please do not submit copyrighted songs to this repository.
 
 **Status:** tested on one CardputerZero unit only.
 
