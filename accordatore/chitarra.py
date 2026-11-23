@@ -30,6 +30,8 @@ LOG = os.path.join(CACHE, "errori.log")
 os.environ.setdefault("CZ_DIARIO", os.path.join(CACHE, "sessione.log"))
 sys.path.insert(0, HERE)
 import cz  # noqa: E402
+import lingua  # noqa: E402
+from lingua import t  # noqa: E402
 NAMES = {"tuner.py": "L'accordatore", "songbook.py": "Il canzoniere"}
 
 
@@ -57,34 +59,35 @@ def summary(rc: int, err: str) -> list[str]:
         try:
             name = signal.Signals(-rc).name
         except ValueError:
-            name = f"segnale {-rc}"
-        out = [f"Chiuso dal sistema ({name})."]
+            name = t("segnale {n}", n=-rc)
+        out = [t("Chiuso dal sistema ({nome}).", nome=name)]
         if -rc == signal.SIGKILL:
-            out.append("Possibile memoria esaurita.")
+            out.append(t("Possibile memoria esaurita."))
     else:
         last = next((ln.strip() for ln in reversed(lines)
                      if not ln.startswith(" ") and not ln.startswith("Traceback")), "")
-        out = [last or f"Uscito con codice {rc}."]
+        out = [last or t("Uscito con codice {rc}.", rc=rc)]
     where = [m for m in (re.search(r'File "(.+?)", line (\d+), in (\S+)', ln) for ln in lines) if m]
     if where:
         m = where[-1]
-        out.append(f"{os.path.basename(m.group(1))}, riga {m.group(2)} ({m.group(3)})")
+        out.append(t("{file}, riga {riga} ({funz})", file=os.path.basename(m.group(1)), riga=m.group(2), funz=m.group(3)))
     return out
 
 
 def show_error(script: str, rc: int, err: str):
     """Schermata d'errore; se non si riesce a disegnarla, resta comunque il file di log."""
+    lingua.reload()  # la lingua può essere cambiata con L mentre l'app era aperta
     try:
-        with cz.App("Errore") as app:
+        with cz.App(t("Errore")) as app:
             for _ in range(8):  # ~0,4 s: scarta i tasti premuti prima del crash
                 app.wait(0.05)
             img, d = app.canvas()
-            cz.header(d, "Errore", right=script)
+            cz.header(d, t("Errore"), right=script)
             f, fb = cz.font(11), cz.font(11, bold=True)
             y = cz.BODY_TOP + 4
-            paras = [(f"{NAMES.get(script, script)} si è chiuso per un errore.", fb, cz.WARN)]
+            paras = [(t("{chi} si è chiuso per un errore.", chi=t(NAMES.get(script, script))), fb, cz.WARN)]
             paras += [(s, f, cz.FG) for s in summary(rc, err)]
-            paras += [("Dettagli in ~/.cache/accordatore/errori.log", f, cz.DIM)]
+            paras += [(t("Dettagli in ~/.cache/accordatore/errori.log"), f, cz.DIM)]
             for text, ft, col in paras:
                 for line in cz.wrap(d, text, ft, cz.W - 14):
                     if y > cz.H - cz.FOOTER_H - 14:
@@ -92,7 +95,7 @@ def show_error(script: str, rc: int, err: str):
                     d.text((7, y), line, font=ft, fill=col)
                     y += 14
                 y += 3
-            cz.footer(d, "un tasto qualsiasi: continua")
+            cz.footer(d, t("un tasto qualsiasi: continua"))
             app.show(img)
             end = time.monotonic() + 60
             while time.monotonic() < end and app.wait(0.5) is None:

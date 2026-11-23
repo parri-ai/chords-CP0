@@ -43,6 +43,8 @@ from collections import deque
 import numpy as np
 
 import cz
+import lingua
+from lingua import t
 
 # ---------------------------------------------------------------- musica
 NOTE_EN = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
@@ -229,11 +231,11 @@ class Mic:
                     self.device = dev
                     self.error = None
                     return True
-                errors.append(f"{dev}: {self.error or 'nessun dato'}")
+                errors.append(f"{dev}: {self.error or t('nessun dato')}")
                 self.stop()
             else:
                 errors.append(f"{dev}: {self.error}")
-        self.error = " | ".join(errors) if errors else "nessun dispositivo di cattura"
+        self.error = " | ".join(errors) if errors else t("nessun dispositivo di cattura")
         return False
 
     def _open(self, dev: str) -> bool:
@@ -247,7 +249,7 @@ class Mic:
                                          stdin=subprocess.DEVNULL, bufsize=0,
                                          preexec_fn=_die_with_parent)
         except OSError as e:
-            self.error = "arecord non trovato (sudo apt install alsa-utils)" \
+            self.error = t("arecord non trovato (sudo apt install alsa-utils)") \
                 if isinstance(e, FileNotFoundError) else str(e)
             self.proc = None
             return False
@@ -282,7 +284,7 @@ class Mic:
                 err = proc.stderr.read().decode(errors="replace").strip()
             except Exception:
                 err = ""
-            self.error = (err.splitlines() or ["arecord si è fermato"])[-1][:120]
+            self.error = (err.splitlines() or [t("arecord si è fermato")])[-1][:120]
 
     def _write(self, block: np.ndarray):
         k = len(block)
@@ -472,6 +474,25 @@ class Tuner:
         self.auto = True
         self._retarget()
 
+    def _measure(self) -> float:
+        """Sceglie la corda di riferimento e calcola i cent (self.freq non è None)."""
+        m = freq_midi(self.freq, self.a4)
+        if self.auto:
+            target = min(range(6), key=lambda i: abs(m - self.strings[i]))
+        else:
+            target = self.sel
+        if target != self.target:
+            self.target = target
+            self._retarget()
+            self.needle = None
+        c = cents(self.freq, self.string_freq(target))
+        self.cents = c
+        if self.needle is None or abs(c - self.needle) > 40:
+            self.needle = c
+        else:
+            self.needle += 0.45 * (c - self.needle)
+        return c
+
     def update(self, t: float, f: float | None, frozen: bool = False) -> bool:
         """Aggiorna lo stato con una nuova stima. Ritorna True quando va suonato il ding."""
         if f is not None and not (math.isfinite(f) and f > 0):
@@ -479,6 +500,9 @@ class Tuner:
         if frozen:  # durante il ding: congela tutto, non contare questo tempo
             if self.freq is not None:
                 self.last_valid = t
+                # corda e cent restano coerenti con le scelte fatte nel frattempo (tasti 1-6, T, A):
+                # prima lo schermo mostrava lo scarto calcolato sulla corda precedente
+                self._measure()
             if self.in_since is not None:
                 self.in_since = t - min(self.HOLD * 0.5, t - self.in_since)
             return False
@@ -499,21 +523,8 @@ class Tuner:
                 self.target = self.sel
             return False
 
-        m = freq_midi(self.freq, self.a4)
-        if self.auto:
-            target = min(range(6), key=lambda i: abs(m - self.strings[i]))
-        else:
-            target = self.sel
-        if target != self.target:
-            self.target = target
-            self._retarget()
-            self.needle = None
-        c = cents(self.freq, self.string_freq(target))
-        self.cents = c
-        if self.needle is None or abs(c - self.needle) > 40:
-            self.needle = c
-        else:
-            self.needle += 0.45 * (c - self.needle)
+        c = self._measure()
+        target = self.target
 
         ding = False
         if abs(c) <= self.tol:
@@ -544,8 +555,9 @@ ORANGE = (255, 150, 60)
 METER_X0, METER_X1, METER_Y = 20, 300, 82
 EXIT_SONGBOOK = 10  # codice d'uscita: "apri il canzoniere" (lo gestisce chitarra.py)
 FROM_SONG = os.environ.get("CHITARRA_DA_CANZONE") == "1"  # aperto col tasto T di una canzone
-FOOTER = ("1-6 corda  ←→  A auto  T accord.  M suono  Esc canzone" if FROM_SONG
-          else "1-6 corda  ←→  A auto  T accord.  M suono  S canzoni  Esc")
+def footer_text() -> str:
+    return t("1-6 corda  ←→  A auto  T accord.  M suono  Esc canzone" if FROM_SONG
+             else "1-6 corda  ←→  A auto  T accord.  M suono  S canzoni  Esc")
 FAR_CENTS = 300        # MANUALE: oltre 3 semitoni niente "tendi/allenta", solo un avviso
 AUTO_SURE_CENTS = 100  # AUTO: oltre 1 semitono la corda riconosciuta non è affidabile
 
@@ -580,12 +592,12 @@ def draw_screen(d, tu: Tuner, view: dict):
     """Disegna tutto il corpo dello schermo (tra header e footer)."""
     now = view["now"]
     italian = view["italian"]
-    name = TUNINGS[tu.tuning][0]
-    mode = "AUTO" if tu.auto else "MANUALE"
-    right = f"{name} · {mode}" + (" · muto" if view["muted"] else "")
+    name = t(TUNINGS[tu.tuning][0])
+    mode = "AUTO" if tu.auto else t("MANUALE")
+    right = f"{name} · {mode}" + (t(" · muto") if view["muted"] else "")
     if view.get("spk_error") and not view["muted"]:
         right += " · ding ✗"
-    cz.header(d, "Accordatore", right=right)
+    cz.header(d, t("Accordatore"), right=right)
 
     c = tu.cents
     col = _state_color(c, tu.tol)
@@ -593,16 +605,16 @@ def draw_screen(d, tu: Tuner, view: dict):
 
     # --- microfono assente: solo il messaggio, niente strumento
     if view.get("error"):
-        d.text((8, 24), "Microfono non disponibile", font=cz.font(15, bold=True), fill=cz.BAD)
+        d.text((8, 24), t("Microfono non disponibile"), font=cz.font(15, bold=True), fill=cz.BAD)
         y = 46
         for line in cz.wrap(d, view["error"], cz.font(10), cz.W - 16)[:6]:
             d.text((8, y), line, font=cz.font(10), fill=cz.DIM)
             y += 13
         y += 6
-        for line in ("Da SSH prova:  arecord -l", "e:  python3 tuner.py --list-devices"):
+        for line in (t("Da SSH prova:  arecord -l"), t("e:  python3 tuner.py --list-devices")):
             d.text((8, y), line, font=cz.font(11), fill=cz.FG)
             y += 15
-        cz.footer(d, "Esc esci")
+        cz.footer(d, t("Esc esci"))
         return
 
     # --- nota grande e numeri
@@ -613,19 +625,19 @@ def draw_screen(d, tu: Tuner, view: dict):
         x = 10 + cz.text_w(d, nm, fb) + 2
         d.text((x, 44), octv, font=cz.font(17, bold=True), fill=col)
         d.text((150, 22), f"{tu.freq:6.1f} Hz", font=cz.font(18, bold=True), fill=cz.FG)
-        dev_txt = f"{c:+.1f} cent" if abs(c) < 100 else f"{c / 100:+.1f} semitoni"
+        dev_txt = f"{c:+.1f} cent" if abs(c) < 100 else t("{v} semitoni", v=f"{c / 100:+.1f}")
         d.text((150, 43), dev_txt, font=cz.font(15, bold=True), fill=col)
     else:
         d.text((14, 18), "–", font=fb, fill=cz.DIM)
-        d.text((150, 26), "In ascolto…", font=cz.font(16, bold=True), fill=cz.DIM)
-        d.text((150, 46), "suona una corda", font=cz.font(12), fill=cz.DIM)
+        d.text((150, 26), t("In ascolto…"), font=cz.font(16, bold=True), fill=cz.DIM)
+        d.text((150, 46), t("suona una corda"), font=cz.font(12), fill=cz.DIM)
     if tgt is not None:
         tn, to = note_parts(tu.strings[tgt], italian)
-        info = f"{6 - tgt}ª corda · {tn}{to} {tu.string_freq(tgt):.2f} Hz"
+        info = t("{n}ª corda · {nota} {hz} Hz", n=6 - tgt, nota=tn + to, hz=f"{tu.string_freq(tgt):.2f}")
     else:
-        info = "AUTO: trova la corda da sé"
+        info = t("AUTO: trova la corda da sé")
     if tu.a4 != 440:
-        info += f" · La={tu.a4:g}"
+        info += t(" · La={v}", v=f"{tu.a4:g}")
     fi = cz.font(10)
     d.text((150, 62), cz.ellipsize(d, info, fi, 302 - 150), font=fi, fill=cz.DIM)
 
@@ -673,9 +685,9 @@ def draw_screen(d, tu: Tuner, view: dict):
     sy = 106
     fbig = cz.font(14, bold=True)
     if c is None:
-        _centered(d, cz.W // 2, sy, "pizzica la corda vicino al microfono", cz.font(11), cz.DIM)
+        _centered(d, cz.W // 2, sy, t("pizzica la corda vicino al microfono"), cz.font(11), cz.DIM)
     elif abs(c) <= tu.tol:
-        txt = "ACCORDATA"
+        txt = t("ACCORDATA")
         w = cz.text_w(d, txt, fbig)
         x = cz.W // 2 - (w + 18) // 2
         if now - tu.ding_t < 1.2:
@@ -684,16 +696,16 @@ def draw_screen(d, tu: Tuner, view: dict):
         d.text((x + 18, sy - 1), txt, font=fbig, fill=cz.OK)
     else:
         flat = c < 0
-        txt = "tendi la corda" if flat else "allenta la corda"
+        txt = t("tendi la corda") if flat else t("allenta la corda")
         arrow = True
         if tu.auto and abs(c) > AUTO_SURE_CENTS:
             # in AUTO, a più di un semitono dalla corda più vicina non si sa quale corda sia:
             # un La calante di 2,5 semitoni sembra un Mi crescente. Niente direzione.
-            txt, fbig, arrow = "corda incerta: sceglila con i tasti 1-6", cz.font(12, bold=True), False
+            txt, fbig, arrow = t("corda incerta: sceglila con i tasti 1-6"), cz.font(12, bold=True), False
         elif abs(c) > FAR_CENTS:
             # più di 3 semitoni dalla corda scelta: quasi sempre è la corda sbagliata.
             # Non invitare a tirare: si rischia di spezzarla.
-            txt, fbig = "troppo lontana: è la corda giusta?", cz.font(12, bold=True)
+            txt, fbig = t("troppo lontana: è la corda giusta?"), cz.font(12, bold=True)
         w = cz.text_w(d, txt, fbig)
         if arrow:
             x = cz.W // 2 - (w + 18) // 2
@@ -724,7 +736,7 @@ def draw_screen(d, tu: Tuner, view: dict):
     if toast and view.get("now", 0) < toast[1]:
         cz.footer(d, toast[0])
     else:
-        cz.footer(d, view.get("footer") or FOOTER)
+        cz.footer(d, view.get("footer") or footer_text())
 
 
 # ---------------------------------------------------------------- impostazioni
@@ -732,7 +744,7 @@ CONF = os.path.join(os.environ.get("XDG_CONFIG_HOME") or os.path.expanduser("~/.
                     "accordatore", "impostazioni.json")
 DEFAULTS = {"a4": 440.0, "tolleranza_cent": 3.0, "soglia_db": -50.0, "mic": "", "uscita": "",
             "rate": 44100, "accordatura": 0, "auto": True, "corda": 0, "nomi_italiani": False,
-            "suono": True, "tempo_accordata": 1.0}
+            "suono": True, "tempo_accordata": 1.0, "lingua": "it"}
 
 
 def load_conf() -> dict:
@@ -768,9 +780,9 @@ def level_db(x: np.ndarray) -> float:
 
 def splash(app, text: str):
     img, d = app.canvas()
-    cz.header(d, "Accordatore", right="")
+    cz.header(d, t("Accordatore"), right="")
     d.text((10, 60), text, font=cz.font(14, bold=True), fill=cz.FG)
-    cz.footer(d, "Esc esci")
+    cz.footer(d, t("Esc esci"))
     app.show(img)
 
 
@@ -808,9 +820,12 @@ def run(args) -> int:
         sys.exit(0)
     signal.signal(signal.SIGTERM, on_term)
     mic = Mic(rate=rate, channels=2)
-    with cz.App("Accordatore") as app:
+    first_run = not os.path.exists(CONF)
+    with cz.App(t("Accordatore")) as app:
         try:
-            splash(app, "Avvio microfono…")
+            splash(app, t("Avvio microfono…"))
+            if first_run:  # al primo avvio ricorda come cambiare lingua
+                view["toast"] = (t("L = English"), time.monotonic() + 6.0)
             if not mic.start(capture_candidates(conf["mic"] or None)):
                 view["error"] = mic.error
             dev = mic.device or "default"
@@ -867,14 +882,16 @@ def run(args) -> int:
                     elif k.is_("m"):
                         view["muted"] = not view["muted"]
                         if view["muted"]:
-                            view["toast"] = ("Suono disattivato: niente ding", time.monotonic() + 2.0)
+                            view["toast"] = (t("Suono disattivato: niente ding"), time.monotonic() + 2.0)
                         else:
-                            view["toast"] = ("Suono attivo: ding di prova", time.monotonic() + 2.0)
+                            view["toast"] = (t("Suono attivo: ding di prova"), time.monotonic() + 2.0)
                             if not spk.busy:
                                 if spk.exclusive:
                                     spk.play_with_mic_paused(mic)
                                 else:
                                     spk.play()
+                    elif k.is_("l"):
+                        view["toast"] = (lingua.toggle(), time.monotonic() + 2.0)
                     elif k.is_("s"):
                         cz.diario("accordatore: apre il canzoniere (S)")
                         return EXIT_SONGBOOK

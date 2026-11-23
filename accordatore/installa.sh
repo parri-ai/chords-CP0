@@ -11,7 +11,7 @@ SRC="$(cd "$(dirname "$0")" && pwd)"
 PREFIX=/usr/share/APPLaunch
 DEST="$PREFIX/apps/accordatore"
 UTENTE="${SUDO_USER:-pi}"
-FILES="chitarra.py tuner.py songbook.py cz.py"
+FILES="chitarra.py tuner.py songbook.py cz.py lingua.py"
 
 for f in $FILES accordatore.png; do
     [ -f "$SRC/$f" ] || { echo "ERRORE: manca $f accanto a installa.sh"; exit 1; }

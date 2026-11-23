@@ -11,6 +11,7 @@ Accordatore per chitarra con canzoniere, come app del launcher (APPLaunch) di [M
 
 - **Accordatore.** Ascolta la chitarra dal microfono del device e mostra nota, scarto in cent e se tendere o allentare. Suona un "ding" quando la corda è intonata. Riconosce la corda da solo oppure la scegli con i tasti 1-6. Accordature: Standard, Drop D, mezzo tono sotto, Open G, DADGAD. Nomi delle note in anglosassone o in italiano.
 - **Canzoniere.** Testi con gli accordi sopra, da file ChordPro o da `.txt` copiati dai siti di accordi. Trasposizione, scorrimento automatico, diagrammi degli accordi, accordi in notazione italiana (Do, Lam, SIb…). Il comando `converti-canzone` trasforma un PDF di accordi in `.txt`.
+- **Italiano o inglese.** L'interfaccia è in italiano; con il tasto `L` passa all'inglese (e viceversa) e la scelta viene ricordata.
 
 ## Installazione rapida
 
@@ -78,10 +79,18 @@ Progetto non ufficiale, non affiliato a M5Stack.
 
 ## English
 
-Guitar tuner and songbook app for the **M5Stack CardputerZero** launcher (APPLaunch). The interface is in Italian.
+Guitar tuner and songbook app for the **M5Stack CardputerZero** launcher (APPLaunch).
+
+**English interface:** the app starts in Italian; press **`L`** in the tuner or in the song list to switch to English. The choice is saved (`"lingua": "en"` in `~/.config/accordatore/impostazioni.json`). The documentation, the install messages and the command-line tools are in Italian only.
+
+| | |
+|---|---|
+| ![Tuner in English](docs/en-tuner.png) | ![Songbook in English](docs/en-songbook.png) |
 
 - **Tuner:** detects the pitch from the built-in microphone (YIN algorithm) and shows note, cents and tune up/down. It plays a chime when the string is in tune. Auto string detection or manual selection with keys 1-6. Tunings: Standard, Drop D, half step down, Open G, DADGAD.
 - **Songbook:** lyrics with chords from ChordPro files or plain "chords over lyrics" text files. Transpose, auto-scroll, chord diagrams, Italian chord names. A `converti-canzone` command converts chord-sheet PDFs to text.
+
+**Keys.** Tuner: `1`-`6` pick a string (1 = low E, on the left), `←` `→` previous/next string, `A` auto string detection, `T` tuning, `N` note names (E A D / Mi La Re), `M` sound on/off, `S` songbook, `L` language, `Esc` quit. Songbook: `↑` `↓` select or scroll, `Enter` open, `R` reload, `S`/`G` transpose up/down, `A` auto-scroll, `1`-`9` speed, `C` chord diagrams, `N` chord names, `F` text size, `T` tuner, `L` language, `Esc` back.
 
 **Install** (on the device): clone the repository (or download the ZIP), then `cd accordatore && sudo sh installa.sh`. The script installs the apt dependencies (`python3-numpy`, `python3-pil`, `alsa-utils`, `poppler-utils`) and adds the launcher icon. Test it without a guitar: `python3 /usr/share/APPLaunch/apps/accordatore/tuner.py --selftest`. Remove it with `sudo sh disinstalla.sh`.
 

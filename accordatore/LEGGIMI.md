@@ -43,12 +43,18 @@ L'icona compare nel launcher entro pochi secondi; se non c'è, riavvia il device
 | `N` | nomi delle note: E A D… ↔ Mi La Re… |
 | `M` | suono on/off. In basso compare la conferma; quando lo riattivi suona un ding di prova |
 | `S` | apre il canzoniere |
+| `L` | lingua dell'interfaccia: italiano ↔ inglese. La scelta viene ricordata e vale anche per il canzoniere |
 | `Esc` | chiude l'app. Se l'accordatore era stato aperto da una canzone, torna alla canzone |
 
 - In AUTO, se una corda è lontana più di un semitono, l'app scrive "corda incerta" e non indica il verso, perché non può sapere quale corda stai suonando. Scegli la corda con `1`-`6`.
 - In MANUALE, oltre i 3 semitoni di scarto chiede "è la corda giusta?" invece di dirti di tendere, per non rischiare di spezzarla.
 - La barretta a destra è il livello del microfono: il suono deve superare il trattino giallo.
 - Il ding arriva quando la corda resta intonata per un secondo (vedi `tempo_accordata` più sotto).
+- Al primo avvio in basso compare per qualche secondo "L = English", per ricordare come cambiare lingua.
+
+### Lingua inglese
+
+Con `L` (nell'accordatore, nell'elenco delle canzoni o dentro una canzone) l'interfaccia passa all'inglese; premendolo di nuovo torna all'italiano. La scelta viene salvata. Restano in italiano questo manuale, i messaggi dell'installazione e i comandi da terminale (`--selftest`, `--check`, `converti-canzone`).
 
 ## Canzoniere
 
@@ -79,6 +85,7 @@ Per vedere come viene letto un file: `python3 /usr/share/APPLaunch/apps/accordat
 | `C` | diagrammi degli accordi, già trasposti. `≈` indica una versione semplificata, per esempio Cm9 → Cm7 |
 | `F` | dimensione del testo (3 misure). La più piccola serve per le intavolature larghe |
 | `T` | accordatore. Con `Esc` torni alla canzone |
+| `L` | lingua dell'interfaccia: italiano ↔ inglese (anche nell'elenco) |
 | `Esc` | dalla canzone all'elenco; dall'elenco all'accordatore |
 
 La trasposizione viene ricordata canzone per canzone. Dimensione del testo, velocità e notazione valgono per tutte.
@@ -118,6 +125,7 @@ File: `~/.config/accordatore/impostazioni.json` (viene creato dall'app). Le voci
 | `soglia_db` | `-50.0` | livello minimo del microfono; abbassalo (es. `-58`) se il suono non viene preso |
 | `mic` | `""` | dispositivo ALSA del microfono; vuoto = scelta automatica |
 | `uscita` | `""` | dispositivo ALSA per il ding; vuoto = scelta automatica |
+| `lingua` | `"it"` | lingua dell'interfaccia: `"it"` o `"en"` (si cambia anche con il tasto `L`) |
 
 ## Se qualcosa non va
 
@@ -149,6 +157,8 @@ Canzoni (`~/canzoni`) e impostazioni (`~/.config/accordatore`) restano.
 - canzoniere: 204 diagrammi di accordi; trasposizione con scelta di diesis/bemolle; 23 casi di conversione dalla notazione italiana, più parole italiane che non vanno scambiate per accordi; impaginazione da 10 a 60 colonne; giro completo con tastiera simulata su 20 brani;
 - `converti-canzone` su un PDF di prova con carattere proporzionale: 26 accordi su 28 sulla lettera esatta, 2 spostati di una.
 
+**Solo al computer, non ancora sul device:** l'interfaccia in inglese (tasto `L`). Provata con prove automatiche e schermate simulate: ogni testo ha la traduzione e sta nello schermo.
+
 **Non verificato:** altri esemplari o revisioni del CardputerZero, schede audio diverse da quella del device provato, e quali tasti fisici danno `+` e `-` (per questo ci sono anche `S` e `G`).
 
 ## File
@@ -159,4 +169,5 @@ Canzoni (`~/canzoni`) e impostazioni (`~/.config/accordatore`) restano.
 | `tuner.py` | accordatore (rilevamento dell'altezza con l'algoritmo YIN) |
 | `songbook.py` | canzoniere e `converti-canzone` |
 | `cz.py` | mini-framework per schermo (framebuffer 320×170), tastiera (evdev) e interfaccia |
+| `lingua.py` | testi dell'interfaccia in inglese e scelta della lingua |
 | `installa.sh`, `disinstalla.sh` | installazione e rimozione |

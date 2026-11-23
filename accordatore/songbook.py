@@ -38,6 +38,8 @@ import time
 import traceback
 
 import cz
+import lingua
+from lingua import t
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SONGS_DIR = os.environ.get("CZ_SONGS_DIR") or os.path.expanduser("~/canzoni")
@@ -77,6 +79,8 @@ IT_SHARPS = ["Do", "Do#", "Re", "Re#", "Mi", "Fa", "Fa#", "Sol", "Sol#", "La", "
 IT_FLATS = ["Do", "Reb", "Re", "Mib", "Mi", "Fa", "Solb", "Sol", "Lab", "La", "Sib", "Si"]
 NAME_MODES = ["en", "it", "orig"]  # anglosassoni, italiani, come scritti nel file
 NAME_LABEL = {"en": "", "it": "nomi it", "orig": "nomi orig"}
+# etichetta di {start_of_chorus} / {chorus} senza testo: tradotta quando si impagina
+CHORUS = object()
 
 
 def _acc(a: str) -> str:
@@ -239,7 +243,7 @@ class Song:
                     self.items.append(("comment", val))
                 elif name in ("start_of_chorus", "soc"):
                     chorus = True
-                    self.items.append(("section", val or "Ritornello"))
+                    self.items.append(("section", val or CHORUS))
                 elif name in ("end_of_chorus", "eoc"):
                     chorus = False
                 elif name in ("start_of_verse", "sov", "start_of_bridge", "sob"):
@@ -250,7 +254,7 @@ class Song:
                 elif name in ("end_of_tab", "eot"):
                     tab = False
                 elif name == "chorus":
-                    self.items.append(("comment", val or "Ritornello"))
+                    self.items.append(("comment", val or CHORUS))
                 continue
             if tab:
                 self.items.append(("tab", line))
@@ -362,9 +366,9 @@ def layout(song: Song, steps: int, ncols: int, mode: str = "en") -> list[tuple]:
             if rows and rows[-1][0] != "blank":
                 rows.append(("blank", "", False))
         elif k == "comment":
-            wrap_plain("comment", "» " + it[1], False)
+            wrap_plain("comment", "» " + (t("Ritornello") if it[1] is CHORUS else it[1]), False)
         elif k == "section":
-            rows.append(("section", it[1], False))
+            rows.append(("section", t("Ritornello") if it[1] is CHORUS else it[1], False))
         elif k == "tab":
             rows.append(("tab", it[1][:ncols], False))
         elif k == "text":
@@ -527,7 +531,7 @@ def draw_diagram(d, x, y, w, chord: str):
     name = ("≈" if res and res[1] else "") + chord
     d.text((x + w // 2 - cz.text_w(d, name, fn) // 2, y), name, font=fn, fill=cz.FG)
     if res is None:
-        d.text((x + 4, y + 40), "n.d.", font=cz.font(11), fill=cz.DIM)
+        d.text((x + 4, y + 40), t("n.d."), font=cz.font(11), fill=cz.DIM)
         return
     frets = res[0]
     sp = (w - 16) / 5          # distanza tra le corde
@@ -747,7 +751,7 @@ class Viewer:
 
     def ensure_layout(self, d):
         size, ncols, rh, nrows = self.metrics(d)
-        key = (self.steps, ncols, self.mode)
+        key = (self.steps, ncols, self.mode, lingua.current())
         if key != self._key:
             self.rows = layout(self.song, self.steps, ncols, self.mode)
             self._key = key
@@ -776,7 +780,7 @@ class Viewer:
         if self.auto:
             bits.append(f"auto {self.speed}")
         if NAME_LABEL.get(self.mode):
-            bits.append(NAME_LABEL[self.mode])
+            bits.append(t(NAME_LABEL[self.mode]))
         return " · ".join(bits)
 
     def draw_text(self, app):
@@ -813,7 +817,7 @@ class Viewer:
             th = max(8, int(track * nrows / len(self.rows)))
             ty = cz.BODY_TOP + 2 + int((track - th) * self.top / max(1, self.max_top(nrows)))
             d.rectangle([cz.W - 3, ty, cz.W - 1, ty + th], fill=cz.DIM)
-        cz.footer(d, "↑↓␣ scorri  S/G trasponi  A auto  C accordi  T accorda  Esc")
+        cz.footer(d, t("↑↓␣ scorri  S/G trasponi  A auto  C accordi  T accorda  Esc"))
         app.show(img)
 
     def draw_chords(self, app):
@@ -824,19 +828,19 @@ class Viewer:
             flats = prefer_flats((first[0] + self.steps) % 12, first[1])
         names = []
         for c in self.song.chords:
-            t = render_chord(c, self.steps, flats, self.mode)
-            if t not in names:
-                names.append(t)
+            nm = render_chord(c, self.steps, flats, self.mode)
+            if nm not in names:
+                names.append(nm)
         per = 5
         pages = max(1, (len(names) + per - 1) // per)
         self.page = max(0, min(self.page or 0, pages - 1))
-        cz.header(d, "Accordi", right=f"{self.page + 1}/{pages}" + (f" · {self.steps:+d} st" if self.steps else ""))
+        cz.header(d, t("Accordi"), right=f"{self.page + 1}/{pages}" + (f" · {self.steps:+d} st" if self.steps else ""))
         if not names:
-            d.text((8, 50), "Nessun accordo in questa canzone.", font=cz.font(12), fill=cz.DIM)
+            d.text((8, 50), t("Nessun accordo in questa canzone."), font=cz.font(12), fill=cz.DIM)
         bw = (cz.W - 4) // per
         for i, n in enumerate(names[self.page * per:(self.page + 1) * per]):
             draw_diagram(d, 2 + i * bw, cz.BODY_TOP + 3, bw, n)
-        cz.footer(d, "←→ pagina   ≈ = versione semplificata   C/Esc torna al testo")
+        cz.footer(d, t("←→ pagina   ≈ = versione semplificata   C/Esc torna al testo"))
         app.show(img)
 
     def draw(self, app):
@@ -897,6 +901,8 @@ class Viewer:
         elif k.is_("c"):
             self.page = 0
             self.auto = False
+        elif k.is_("l"):
+            lingua.toggle()
         elif k.is_("t"):
             self.remember()
             return "tuner"
@@ -921,12 +927,12 @@ def _wrap_steps(n: int) -> int:
 
 def draw_list(app, lv, songs, note: str = ""):
     img, d = app.canvas()
-    cz.header(d, "Canzoniere", right=f"{len(songs)} brani")
+    cz.header(d, t("Canzoniere"), right=t("{n} brani", n=len(songs)))
     if not songs:
         f = cz.font(11)
         y = cz.BODY_TOP + 6
-        msg = (f"Nessuna canzone in {SONGS_DIR}. Copiaci file .cho (ChordPro) o .txt con "
-               "gli accordi sopra il testo, poi premi R.")
+        msg = t("Nessuna canzone in {dir}. Copiaci file .cho (ChordPro) o .txt con "
+                "gli accordi sopra il testo, poi premi R.", dir=SONGS_DIR)
         for line in cz.wrap(d, msg, f, cz.W - 14):
             d.text((7, y), line, font=f, fill=cz.FG)
             y += 15
@@ -940,7 +946,7 @@ def draw_list(app, lv, songs, note: str = ""):
             dr.text((x, y + 12), cz.ellipsize(dr, sub, cz.font(10), cz.W - 20),
                     font=cz.font(10), fill=cz.FG if sel else cz.DIM)
         lv.draw(d, songs, render)
-    cz.footer(d, note or "↑↓ scegli   ⏎ apri   R ricarica   Esc accordatore")
+    cz.footer(d, note or t("↑↓ scegli   ⏎ apri   R ricarica   L English   Esc accordatore"))
     app.show(img)
 
 
@@ -977,13 +983,13 @@ def main() -> int:
     songs = find_songs()
     lv = cz.ListView(row_h=26)
     viewer: Viewer | None = None
-    note = f"Creata {SONGS_DIR} con alcuni esempi" if created else ""
+    note = t("Creata {dir} con alcuni esempi", dir=SONGS_DIR) if created else ""
     if SKIPPED:
-        note = f"{len(SKIPPED)} file non letti: vedi errori.log"
+        note = t("{n} file non letti: vedi errori.log", n=len(SKIPPED))
     first = True
     while True:
         action = None
-        with cz.App("Canzoniere") as app:
+        with cz.App(t("Canzoniere")) as app:
             if not first:
                 drain(app)
             first = False
@@ -1003,9 +1009,11 @@ def main() -> int:
                     if k.is_("r"):
                         songs = find_songs()
                         lv.sel = min(lv.sel, max(0, len(songs) - 1))
-                        note = f"{len(songs)} brani in {SONGS_DIR}"
+                        note = t("{n} brani in {dir}", n=len(songs), dir=SONGS_DIR)
                         if SKIPPED:
-                            note += f", {len(SKIPPED)} non letti (errori.log)"
+                            note += t(", {n} non letti (errori.log)", n=len(SKIPPED))
+                    elif k.is_("l"):
+                        note = lingua.toggle()
                     elif k.name == "ENTER" and songs:
                         viewer = Viewer(songs[lv.sel], conf)
                         last = time.monotonic()
@@ -1022,7 +1030,7 @@ def main() -> int:
                 except Exception:
                     # un brano problematico non deve chiudere il canzoniere
                     log_problem(f"errore nel brano {viewer.song.path}", traceback.format_exc())
-                    note = f"Errore in \"{viewer.song.title}\": vedi errori.log"
+                    note = t("Errore in \"{titolo}\": vedi errori.log", titolo=viewer.song.title)
                     viewer = None
                     continue
                 if r == "back":
