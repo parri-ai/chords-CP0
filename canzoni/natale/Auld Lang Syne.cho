@@ -1,0 +1,51 @@
+{title: Auld Lang Syne}
+{subtitle: Robert Burns (1788), melodia tradizionale scozzese - pubblico dominio}
+{key: C}
+# Testo: https://en.wikisource.org/wiki/The_Poetical_Works_of_Robert_Burns/Auld_Lang_Syne (ed. 1887)
+# Accordi: https://de.wikibooks.org/wiki/Liederbuch/_Auld_Lang_Syne (CC BY-SA)
+# Verso 4: l'edizione 1887 stampa "And days o' lang syne?"; qui la forma cantata,
+# con "auld", come nella melodia della fonte degli accordi.
+# Licenza di questo file: CC BY-SA 4.0 https://creativecommons.org/licenses/by-sa/4.0/
+# Modifiche rispetto alla fonte: convertito in ChordPro, righe divise per lo schermo
+# del CardputerZero, note in italiano; testo di pubblico dominio integrato dove serviva.
+{comment: Il primo Fa del ritornello va solo sull'attacco "For"}
+
+Should [C]auld acquaintance [G]be forgot,
+and [C]never brought to [F]min'?
+Should [C]auld acquaintance [G]be forgot,
+and [C]days o' [Am]auld lang [C]syne?
+
+{start_of_chorus}
+[F]For [C]auld lang [G]syne, my dear,
+[F]for [C]auld lang [F]syne,
+we'll [C]tak a cup o' [G]kindness yet
+for [C]auld [Am]lang [C]syne.
+{end_of_chorus}
+
+We [C]twa hae run a[G]bout the braes,
+and [C]pu'd the gowans [F]fine,
+but we've [C]wander'd mony a [G]weary foot
+sin [C]auld [Am]lang [C]syne.
+
+{chorus}
+
+We [C]twa hae paidl't [G]i' the burn,
+from [C]mornin sun till [F]dine;
+but [C]seas between us [G]braid hae roar'd
+sin [C]auld [Am]lang [C]syne.
+
+{chorus}
+
+And [C]here's a hand, my [G]trusty fiere,
+and [C]gie's a hand o' [F]thine;
+and we'll [C]tak a right guid [G]willie-waught,
+for [C]auld [Am]lang [C]syne.
+
+{chorus}
+
+And [C]surely ye'll be your [G]pint-stowp,
+and [C]surely I'll be [F]mine;
+and we'll [C]tak a cup o' [G]kindness yet
+for [C]auld [Am]lang [C]syne.
+
+{chorus}

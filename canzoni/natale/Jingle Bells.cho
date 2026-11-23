@@ -1,0 +1,28 @@
+{title: Jingle Bells}
+{subtitle: James Lord Pierpont (1857) - pubblico dominio}
+{key: G}
+# Testo e accordi: https://github.com/cardinote/christmas-chords-lyrics (src/Jingle-Bells.txt, licenza MIT)
+# Confrontato con: https://de.wikibooks.org/wiki/Liederbuch/_Jingle_Bells
+# Licenza di questo file: MIT, Copyright (c) 2020 Cardinote Inc.
+# (testo completo della licenza in canzoni/LICENZA-cardinote-MIT.txt)
+# Modifiche rispetto alla fonte: convertito in ChordPro, righe divise per lo schermo.
+
+[G]Dashing through the snow
+in a [G]one-horse open [C]sleigh,
+[Am]o'er the fields we [D7]go,
+[D7]laughing all the [G]way.
+[G]Bells on bobtail ring,
+[G]making spirits [C]bright,
+what [Am]fun it is to [D]ride and sing
+[D7]a sleighing song to[G]night! Oh!
+
+{start_of_chorus}
+[G]Jingle bells, jingle bells,
+jingle all the way.
+[C]Oh, what fun it [G]is to ride
+in a [A7]one-horse open [D7]sleigh, hey!
+[G]Jingle bells, jingle bells,
+jingle all the way.
+[C]Oh, what fun it [G]is to ride
+in a [D7]one-horse open [G]sleigh.
+{end_of_chorus}
