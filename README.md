@@ -57,7 +57,7 @@ Le canzoni che aggiungi restano solo sul tuo device. Testi e accordi presi dai s
 
 ## Stato
 
-Provata su un solo CardputerZero, con il sistema e il launcher originali. Su altri esemplari il microfono potrebbe chiamarsi in un altro modo: il manuale spiega come sceglierlo. Le segnalazioni sono benvenute.
+Provata su un solo CardputerZero, con il sistema e il launcher originali. Taratura controllata con un La a 440 Hz da un generatore di toni: l'accordatore segna 440,0 Hz (errore sotto 0,2 cent); come misura e come controllarla è spiegato nel manuale. Su altri esemplari il microfono potrebbe chiamarsi in un altro modo: il manuale spiega come sceglierlo. Le segnalazioni sono benvenute.
 
 ## Struttura
 
@@ -97,5 +97,7 @@ Guitar tuner and songbook app for the **M5Stack CardputerZero** launcher (APPLau
 **Your own songs:** put ChordPro (`.cho`) or "chords over lyrics" `.txt` files in `~/canzoni` (subfolders are fine), then press `R` in the song list. `converti-canzone file.pdf` turns a text-based chord PDF into a `.txt` file there. Your songs stay on your device; please do not submit copyrighted songs to this repository.
 
 **Status:** tested on one CardputerZero unit only.
+
+**Calibration:** reference A4 = 440 Hz, equal temperament (configurable with `"a4"`). Pitch is found with the YIN algorithm on 4096-sample windows at 44.1 kHz, 15 times per second, with sub-sample interpolation; the display shows the median of the last 5 readings, and "in tune" means within ±3 cents for 1 second. There is no per-device calibration: frequency depends on the audio codec's sample clock. On the tested unit a 440 Hz reference tone reads 440.0 Hz (error below 0.2 cents). To check yours, play a reference tone your speaker reproduces well (e.g. 329.63 Hz, high E) and read the Hz value; if there is a constant offset of x cents, set `a4 = 440 × 2^(x/1200)`.
 
 **License:** code under the [MIT license](LICENSE), © 2026 Chords. The `canzoni/` folder is licensed separately: 6 songs under CC BY-SA 4.0 (chords from Wikibooks) and 4 under the MIT license of Cardinote Inc. See [canzoni/LEGGIMI.md](canzoni/LEGGIMI.md). Unofficial project, not affiliated with M5Stack.

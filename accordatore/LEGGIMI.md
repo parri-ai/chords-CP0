@@ -113,6 +113,14 @@ Limiti:
 
 Le canzoni che converti restano sul tuo device. Testi e accordi presi dai siti sono di solito protetti da diritto d'autore: non ridistribuirli senza permesso.
 
+## Come misura (taratura)
+
+- Riferimento: La4 = 440 Hz, temperamento equabile. Si cambia con `a4` nelle impostazioni (per esempio 442).
+- Il microfono registra a 44,1 kHz; la nota viene trovata con l'algoritmo YIN su blocchi di 4096 campioni (circa 93 ms), 15 volte al secondo, tra 60 e 700 Hz, con interpolazione del periodo sotto il singolo campione. Le letture poco pulite vengono scartate.
+- Sullo schermo va la mediana delle ultime 5 letture. "Accordata" vuol dire entro ±3 cent (`tolleranza_cent`) per almeno un secondo (`tempo_accordata`).
+- Non c'è una calibrazione per il singolo device: la frequenza si ricava contando i campioni, quindi dipende dall'orologio della scheda audio. Sull'esemplare provato un La a 440 Hz risulta 440,0 Hz.
+- Per controllare il tuo: fai suonare da un generatore di toni una nota che l'altoparlante riproduce bene (per esempio 329,63 Hz, il Mi della 1ª corda) e guarda i Hz in alto. Se trovi uno scarto costante di *x* cent, imposta `a4` = 440 × 2^(*x*/1200). Le note sotto i 150-200 Hz escono male dagli altoparlanti di telefoni e portatili: per la prova non vanno bene.
+
 ## Impostazioni
 
 File: `~/.config/accordatore/impostazioni.json` (viene creato dall'app). Le voci utili:
@@ -150,7 +158,7 @@ Canzoni (`~/canzoni`) e impostazioni (`~/.config/accordatore`) restano.
 
 ## Cosa è stato verificato
 
-**Su un CardputerZero (un solo esemplare):** installazione, accordatura di una chitarra vera con il ding, canzoniere con elenco e brani, passaggio tra le due parti.
+**Su un CardputerZero (un solo esemplare):** installazione, accordatura di una chitarra vera con il ding, canzoniere con elenco e brani, passaggio tra le due parti. Taratura: con un La a 440 Hz da un generatore di toni online l'accordatore segna 440,0 Hz, cioè un errore sotto i 0,05 Hz (meno di 0,2 cent).
 
 **Al computer, con prove automatiche:**
 - accordatore: precisione su corde sintetiche rumorose (errore medio 0,16 cent, massimo 2); logica del ding; disegno della schermata con 3000 livelli di microfono diversi; catena `arecord`/`aplay`, compreso il ripiego quando la scheda audio non permette di registrare e suonare insieme;
