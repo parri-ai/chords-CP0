@@ -1,5 +1,5 @@
 {title: Auld Lang Syne}
-{subtitle: Robert Burns (1788), melodia tradizionale scozzese - pubblico dominio}
+{subtitle: Robert Burns (1788), traditional Scottish tune - public domain}
 {key: C}
 # Testo: https://en.wikisource.org/wiki/The_Poetical_Works_of_Robert_Burns/Auld_Lang_Syne (ed. 1887)
 # Accordi: https://de.wikibooks.org/wiki/Liederbuch/_Auld_Lang_Syne (CC BY-SA)
@@ -7,8 +7,8 @@
 # con "auld", come nella melodia della fonte degli accordi.
 # Licenza di questo file: CC BY-SA 4.0 https://creativecommons.org/licenses/by-sa/4.0/
 # Modifiche rispetto alla fonte: convertito in ChordPro, righe divise per lo schermo
-# del CardputerZero, note in italiano; testo di pubblico dominio integrato dove serviva.
-{comment: Il primo Fa del ritornello va solo sull'attacco "For"}
+# del CardputerZero, note e sottotitoli in inglese; testo di pubblico dominio integrato dove serviva.
+{comment: The first F of the chorus is only on the pickup "For"}
 
 Should [C]auld acquaintance [G]be forgot,
 and [C]never brought to [F]min'?

@@ -608,9 +608,9 @@ def save_conf(conf: dict):
 EXAMPLES = {
     "Amazing Grace.cho": """\
 {title: Amazing Grace}
-{subtitle: John Newton, 1779 - pubblico dominio}
+{subtitle: John Newton, 1779 - public domain}
 {key: G}
-{comment: 3/4, lenta. Arrangiamento semplice di esempio}
+{comment: 3/4, slow. Simple example arrangement}
 
 [G]Amazing [G7]grace! How [C]sweet the [G]sound
 That [G]saved a [Em]wretch like [D]me! [D7]
@@ -623,9 +623,9 @@ How [G]precious [G7]did that [C]grace ap[G]pear
 The [G]hour I [D]first be[G]lieved!
 """,
     "Greensleeves.txt": """\
-Tradizionale inglese, XVI secolo - pubblico dominio
+Traditional English, 16th century - public domain
 
-[Strofa]
+[Verse]
 Am       G         Am    E
 Alas, my love, you do me wrong,
 Am         G   E
@@ -635,7 +635,7 @@ For I have loved you well and long,
 Am            E    Am
 Delighting in your company.
 
-[Ritornello]
+[Chorus]
 C            G       Am E
 Greensleeves was all my joy
 C            G      E
@@ -647,7 +647,7 @@ And who but my lady Greensleeves.
 """,
     "Quel mazzolin di fiori.cho": """\
 {title: Quel mazzolin di fiori}
-{subtitle: Canto popolare - pubblico dominio}
+{subtitle: Italian folk song - public domain}
 {key: C}
 
 [C]Quel mazzolin di [G]fiori
@@ -660,10 +660,10 @@ perché l'è un bel maz[C]zetto
 lo voglio dare al mio mo[F]ret[C]to
 questa [G]sera quando [C]vien.
 """,
-    "Esercizio arpeggio.cho": """\
-{title: Esercizio: arpeggio Am - C - G - E}
-{subtitle: esempio di intavolatura}
-{comment: Pollice sui bassi, poi indice-medio-anulare}
+    "Arpeggio exercise.cho": """\
+{title: Arpeggio exercise: Am - C - G - E}
+{subtitle: tablature example}
+{comment: Thumb on the bass strings, then index-middle-ring}
 
 {start_of_tab}
    Am        C         G         E
@@ -675,7 +675,7 @@ A|-0-------|-3-------|---------|---------|
 E|---------|---------|-3-------|-0-------|
 {end_of_tab}
 
-[Am]Ripeti quattro volte, [C]poi cambia [G]accordo [E]
+[Am]Repeat four times, [C]then change [G]chord [E]
 """,
 }
 

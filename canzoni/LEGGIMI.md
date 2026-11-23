@@ -25,7 +25,7 @@ Licenza: [Creative Commons Attribuzione - Condividi allo stesso modo 4.0](https:
 | Drunken Sailor | <https://de.wikibooks.org/wiki/Liederbuch/_What_shall_we_do_with_the_drunken_sailor> |
 | Auld Lang Syne | accordi: <https://de.wikibooks.org/wiki/Liederbuch/_Auld_Lang_Syne>; testo: [Wikisource, ed. 1887](https://en.wikisource.org/wiki/The_Poetical_Works_of_Robert_Burns/Auld_Lang_Syne) |
 
-Modifiche rispetto alle fonti: conversione in formato ChordPro, righe divise per lo schermo da 320×170, note in italiano, notazione tedesca H7 resa come B7, correzione di un refuso ("Haeve" → "Heave"), tolti gli accordi blues opzionali nell'ultima strofa di Swing Low. Dove serviva, sono state integrate strofe di pubblico dominio (Danny Boy: testo del 1913). I dettagli sono nelle righe `#` di ogni file. Queste versioni modificate sono distribuite con la stessa licenza CC BY-SA 4.0.
+Modifiche rispetto alle fonti: conversione in formato ChordPro, righe divise per lo schermo da 320×170, note e sottotitoli in inglese, notazione tedesca H7 resa come B7, correzione di un refuso ("Haeve" → "Heave"), tolti gli accordi blues opzionali nell'ultima strofa di Swing Low. Dove serviva, sono state integrate strofe di pubblico dominio (Danny Boy: testo del 1913). I dettagli sono nelle righe `#` di ogni file. Queste versioni modificate sono distribuite con la stessa licenza CC BY-SA 4.0.
 
 ## MIT — accordi da cardinote/christmas-chords-lyrics
 
@@ -42,7 +42,7 @@ Modifiche: conversione in formato ChordPro, righe divise per lo schermo.
 
 ## I quattro esempi dentro l'app
 
-Amazing Grace, Greensleeves, Quel mazzolin di fiori ed Esercizio arpeggio vengono creati dall'app in `~/canzoni` al primo avvio. Sono arrangiamenti semplici scritti per questo progetto su testi di pubblico dominio, e seguono la licenza MIT del repository.
+Amazing Grace, Greensleeves, Quel mazzolin di fiori e Arpeggio exercise vengono creati dall'app in `~/canzoni` al primo avvio. Sono arrangiamenti semplici scritti per questo progetto su testi di pubblico dominio, e seguono la licenza MIT del repository.
 
 ## Segnalazioni
 

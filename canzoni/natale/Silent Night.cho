@@ -1,5 +1,5 @@
 {title: Silent Night}
-{subtitle: F. X. Gruber e J. Mohr (1818), trad. J. F. Young (1859) - pubblico dominio}
+{subtitle: F. X. Gruber and J. Mohr (1818), transl. J. F. Young (1859) - public domain}
 {key: G}
 # Testo: https://en.wikipedia.org/wiki/Silent_Night (traduzione di Young)
 # Accordi: https://github.com/cardinote/christmas-chords-lyrics (src/Silent-Night.txt, MIT);
@@ -7,7 +7,7 @@
 # Licenza di questo file: MIT, Copyright (c) 2020 Cardinote Inc.
 # (testo completo della licenza in canzoni/LICENZA-cardinote-MIT.txt)
 # Modifiche rispetto alla fonte: convertito in ChordPro, righe divise per lo schermo.
-{comment: 3/4, lenta}
+{comment: 3/4, slow}
 
 [G]Silent night, holy night,
 [D7]All is calm, [G]all is bright
